@@ -36,6 +36,7 @@
       ]);
 
       // Hash password untuk keamanan
+      // $validated['password'] = Hash::make($validated['password']);
       $validated['password'] = bcrypt($validated['password']);
 
       // Simpan data ke database
@@ -59,12 +60,12 @@
     public function login(Request $request) {
       // Validasi input
       $validated = $request->validate([
-        'username' => 'required|string|max:50',
+        'email' => 'required|string|max:50',
         'password' => 'required|string',
       ]);
 
-      // Ambil user berdasarkan username
-      $user = DB::table('users')->where('username', $validated['username'])->first();
+      // Ambil user berdasarkan email
+      $user = DB::table('users')->where('email', $validated['email'])->first();
 
       // Periksa apakah user ditemukan
       if (!$user) {
@@ -88,7 +89,6 @@
         'message' => 'Login successful',
         'user' => [
             'id' => $user->id,
-            'username' => $user->username,
             'email' => $user->email,
         ]
       ], 200);
@@ -101,7 +101,7 @@
       ]);
 
       // Hash password untuk keamanan
-      $validated['password'] = bcrypt($validated['password']);
+      $validated['password'] = Hash::make($validated['password']);
       
       // Simpan data ke database
       try {
@@ -196,7 +196,7 @@
       // }
   
       // Hapus OTP setelah verifikasi
-      DB::table('user')->where('username', $user->username)->update(['otp' => '']);
+      DB::table('users')->where('username', $user->username)->update(['otp' => '']);
   
       return response()->json([
         'success' => true, 

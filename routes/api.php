@@ -39,7 +39,8 @@ Route::get('/tesdb', function () {
 //                 ->first();
 //     return "Selamat datang di Hairstyle app api\nUsername dengan id {$id} adalah {$user->username}";
 // });
-Route::post('/user', function () {return response()->noContent();});
+Route::post('/user/daftar', [UserController::class, 'registrasi']);
+Route::post('/user/login', [UserController::class, 'login']);
 Route::get('/users/{username}', [UserController::class, 'getUserByUsername']);
 Route::post('/product', function () {return response()->noContent();});
 Route::post('/hairstyle', function () {return response()->noContent();});
