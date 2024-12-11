@@ -61,23 +61,23 @@ Route::controller(ProductController::class)->group(function () {
 });
 
 Route::controller(BarbershopController::class)->group(function () {
-    Route::post('/getbarbershop','getBarbershop');
+    Route::get('/getbarbershop','getBarbershop');
 });
 
 Route::controller(CompatiblefaceController::class)->group(function () {
-    Route::post('/getcompatibleface','getcompatibleface');
+    Route::get('/getcompatibleface','getcompatibleface');
 });
 
 Route::controller(HaircutController::class)->group(function () {
-    Route::post('/gethaircut','gethaircut');
+    Route::get('/gethaircut','gethaircut');
 });
 
 Route::controller(RecommendationController::class)->group(function () {
-    Route::post('/getrekomendasi','getrecommendation');
+    Route::get('/getrekomendasi','getrecommendation');
 });
 
 Route::controller(ScanhistoryController::class)->group(function () {
-    Route::post('/getscanhistory','getscanhistory');
+    Route::get('/getscanhistory','getscanhistory');
 });
 
 Route::post('/product', function () {return response()->noContent();});
