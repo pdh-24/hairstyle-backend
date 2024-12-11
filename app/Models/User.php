@@ -64,7 +64,12 @@
       // }
       public function getJWTCustomClaims()
       {
-          return [];
+        //   return [];
+        return [
+            'username' => $this->username,
+            'email' => $this->email,
+            // 'role' => $this->role,  // Jika Anda ingin menambahkan role juga
+        ];
       }
   }
 ?>
