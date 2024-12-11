@@ -31,7 +31,7 @@
     public function registrasi(Request $request) {
       $validated = $request->validate([
         'username' => 'required|string',
-        'email' => 'required|String',
+        'email' => 'required|string',
         'password' => 'required|string',
       ]);
 
@@ -96,7 +96,7 @@
     public function updateUser(Request $request) {
       $validated = $request->validate([
         'username' => 'required|string',
-        'email' => 'required|String',
+        'email' => 'required|string',
         'password' => 'required|string',
       ]);
 
@@ -105,15 +105,22 @@
       
       // Simpan data ke database
       try {
-        DB::table('users')->insert($validated);
+        DB::table('users')
+          ->where('username', $validated['username'])
+          ->update($validated);
       } catch (\Exception $e) {
         // Jika terjadi error saat insert
         return response()->json([
           'success' => false,
-          'message' => 'Failed to save user data',
+          'message' => 'Gagal memperbarui data pengguna',
           'error' => $e->getMessage()
         ], 500);
       }
+
+      return response()->json([
+        'success' => true,
+        'message' => 'Data pengguna berhasil diperbarui',
+      ], 200);
     }
     public function lupaPass(Request $request) {
       // Validasi input

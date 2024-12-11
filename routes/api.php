@@ -1,9 +1,15 @@
 <?php
 
+use App\Http\Controllers\BarbershopController;
+use App\Http\Controllers\CompatiblefaceController;
+use App\Http\Controllers\HaircutController;
+use App\Http\Controllers\RecommendationController;
+use App\Http\Controllers\ScanhistoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,11 +25,10 @@ use App\Http\Controllers\UserController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
 // function () {return response()->noContent();} //Function that is a placeholder for doing nothing post request
-// Route::post('/', 'function (Request $request) {}');
-Route::get('/tesroute', function () {
-    return "Selamat datang di Hairstyle app api";
-});
+Route::get('/', function () {return "Selamat datang di Hairstyle app api";});
+Route::redirect('/tesroute', '/');
 Route::get('/tesdb', function () {
     try {
         DB::connection()->getPdo();
@@ -32,18 +37,41 @@ Route::get('/tesdb', function () {
         return "Could not connect to the database. Please check your configuration.";
     }
 });
-// Route::get('/getuser/{id}', function ($id) {
-//     $user = DB::table('users')
-//                 ->where('id', $id)
-//                 ->select('username')
-//                 ->first();
-//     return "Selamat datang di Hairstyle app api\nUsername dengan id {$id} adalah {$user->username}";
-// });
-Route::post('/user/daftar', [UserController::class, 'registrasi']);
-Route::post('/user/login', [UserController::class, 'login']);
-Route::get('/users/{username}', [UserController::class, 'getUserByUsername']);
+// Route::post('/user/daftar', [UserController::class, 'registrasi']);
+// Route::post('/user/login', [UserController::class, 'login']);
+// Route::get('/users/{username}', [UserController::class, 'getUserByUsername']);
+Route::controller(UserController::class)->group(function () {
+    // POST
+    Route::post('/user/daftar', 'registrasi');
+    Route::post('/user/login', 'login');
+    Route::post('/updateuser', 'updateUser');
+    Route::post('/lupapassword', 'lupaPass');
+    Route::post('/verifikasiotp',action: 'verifyOtp');
+    Route::post('/logout','login');
+
+    // GET
+    Route::get('/user/{username}', 'getUserByUsername');
+});
+Route::controller(ProductController::class)->group(function () {
+    Route::post('/getproduct','getProduct');
+});
+Route::controller(BarbershopController::class)->group(function () {
+    Route::post('/getbarbershop','getBarbershop');
+});
+Route::controller(CompatiblefaceController::class)->group(function () {
+    Route::post('/getcompatibleface','getcompatibleface');
+});
+Route::controller(HaircutController::class)->group(function () {
+    Route::post('/gethaircut','gethaircut');
+});
+Route::controller(RecommendationController::class)->group(function () {
+    Route::post('/getrekomendasi','getrecommendation');
+});
+Route::controller(ScanhistoryController::class)->group(function () {
+    Route::post('/getscanhistory','getscanhistory');
+});
 Route::post('/product', function () {return response()->noContent();});
-Route::post('/hairstyle', function () {return response()->noContent();});
+Route::post('/haircut', function () {return response()->noContent();});
 Route::post('/face', function () {return response()->noContent();});
 Route::post('/scan', function () {return response()->noContent();});
 Route::post('/recommendation', function () {return response()->noContent();});
