@@ -16,7 +16,10 @@
       try {
         DB::table('haircut')->insert($validated);
       } catch (\Exception $e) {
-        
+        return response()->json([
+          'success' => true,
+          'message' => 'Gagal menambahkan gaya rambut'
+        ], 500);
       }
 
       return response()->json([
@@ -28,7 +31,8 @@
     public function getHaircut(Request $request) {
       
       try {
-        $haircutlist = DB::table('haircut')->get(); 
+        $HaircutList = DB::table('haircut')->get();
+        $HaircutImages = DB::table('haircut_images')->get(); 
       } catch (\Throwable $th) {
         // Jika terjadi error saat get haircutlist
         return response()->json([
@@ -37,12 +41,34 @@
             'error' => $th->getMessage()
         ], 500);
       }
+      // Decode JSON menjadi array PHP
+      $haircutlistArr = json_decode($HaircutList, true);
+      $haircutimagesArr = json_decode($HaircutImages, true);
 
-      return response()->json([
+      // Merging products dengan images
+      foreach ($haircutlistArr as &$haircut) {
+        // Filter gambar berdasarkan product_id
+        $haircut['images'] = array_filter($haircutimagesArr, function($image) use ($haircut) {
+            return $image['hair_style_id'] == $haircut['id'];
+        });
+
+        // Hapus kolom hair_style_id dalam setiap gambar
+        foreach ($haircut['images'] as &$image) {
+            unset($image['hair_style_id']);
+        }
+
+        // Reindex array 'images' untuk mendapatkan index yang berurutan
+        $haircut['images'] = array_values($haircut['images']);
+      }
+
+      // // Output hasil merge
+      // // echo json_encode($productlistArr, JSON_PRETTY_PRINT);
+
+      return response()->json(data: [
         'success' => true,
         'message' => 'Data semua gaya rambut berhasil didapatkan',
-        'data' => $haircutlist
-      ], 200);
+        'data' => $haircutlistArr
+      ], status: 200);
     }
 
     public function updateHaircut(Request $request) {
