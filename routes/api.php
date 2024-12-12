@@ -3,13 +3,13 @@
 use App\Http\Controllers\BarbershopController;
 use App\Http\Controllers\CompatiblefaceController;
 use App\Http\Controllers\HaircutController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RecommendationController;
 use App\Http\Controllers\ScanhistoryController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ProductController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,9 +37,7 @@ Route::get('/tesdb', function () {
         return "Could not connect to the database. Please check your configuration.";
     }
 });
-// Route::post('/user/daftar', [UserController::class, 'registrasi']);
-// Route::post('/user/login', [UserController::class, 'login']);
-// Route::get('/users/{username}', [UserController::class, 'getUserByUsername']);
+
 Route::controller(UserController::class)->group(function () {
     // POST
     Route::post('/user/daftar', 'registrasi');
@@ -52,12 +50,9 @@ Route::controller(UserController::class)->group(function () {
     // GET
     Route::get('/user/{username}', 'getUserByUsername');
 
+    // Middleware
     Route::middleware('auth:api')->get('user', 'getUser');
     Route::middleware('auth:api')->post('logout', 'logout');
-});
-
-Route::controller(ProductController::class)->group(function () {
-    Route::get('/getproduct','getProduct');
 });
 
 Route::controller(BarbershopController::class)->group(function () {
@@ -72,6 +67,10 @@ Route::controller(HaircutController::class)->group(function () {
     Route::get('/gethaircut','gethaircut');
 });
 
+Route::controller(ProductController::class)->group(function () {
+    Route::get('/getproduct','getProduct');
+});
+
 Route::controller(RecommendationController::class)->group(function () {
     Route::get('/getrekomendasi','getrecommendation');
 });
@@ -79,10 +78,3 @@ Route::controller(RecommendationController::class)->group(function () {
 Route::controller(ScanhistoryController::class)->group(function () {
     Route::get('/getscanhistory','getscanhistory');
 });
-
-Route::post('/product', function () {return response()->noContent();});
-Route::post('/haircut', function () {return response()->noContent();});
-Route::post('/face', function () {return response()->noContent();});
-Route::post('/scan', function () {return response()->noContent();});
-Route::post('/recommendation', function () {return response()->noContent();});
-Route::post('/barbershop', function () {return response()->noContent();});

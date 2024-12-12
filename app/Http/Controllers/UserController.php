@@ -141,28 +141,41 @@
     */
     /* Ini dengan token */
     public function login(Request $request) {
-      $credentials = $request->only('email', 'password');
+      // Validasi input
+      $validated = $request->validate([
+        'email' => 'required|string|max:50',
+        'password' => 'required|string',
+      ]);
 
-        try {
-            if (! $token = JWTAuth::attempt($credentials)) {
-                return response()->json([
-                  'error' => 'Invalid credentials'
-                ], 401);
-            }
+      // Ambil user berdasarkan email
+      $user = DB::table('users')->where('email', $validated['email'])->first();
 
-            // Get the authenticated user.
-            $user = auth()->user();
+      // Periksa apakah user ditemukan
+      if (!$user) {
+        return response()->json([
+          'success' => false,
+          'message' => 'User not found'
+        ], 404);
+      }
 
-            // (optional) Attach the role to the token.
-            $token = JWTAuth::claims([
-              'role' => $user->role])->fromUser($user);
+      // Periksa kecocokan password
+      if (!Hash::check($validated['password'], $user->password)) {
+        return response()->json([
+          'success' => false,
+          'message' => 'Invalid credentials'
+        ], 401);
+      }
 
-            return response()->json(compact('token'));
-        } catch (JWTException $e) {
-            return response()->json([
-              'error' => 'Could not create token'
-            ], 500);
-        }
+      // Login berhasil
+      return response()->json([
+        'success' => true,
+        'message' => 'Login successful',
+        'user'    => [
+          'id'        => $user->id,
+          'email'     => $user->email,
+          'username'  => $user ->username
+        ]
+      ], 200);
     }
     public function getUser(Request $request) {
       try {
