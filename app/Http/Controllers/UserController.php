@@ -2,15 +2,12 @@
 
   namespace App\Http\Controllers;
 
-  use App\Models\User;
   use Illuminate\Support\Facades\DB;
   use Illuminate\Support\Facades\Hash;
   use Illuminate\Http\Request;
   use Hidehalo\Nanoid\Client;
   use Illuminate\Support\Facades\Mail;
   use Carbon\Carbon;
-  use Tymon\JWTAuth\Facades\JWTAuth;
-  use Tymon\JWTAuth\Exceptions\JWTException;
 
   class UserController extends Controller {
     private function generateOtp($charTypes = '1234567890', $charNum = 1) {
@@ -60,86 +57,6 @@
           'message' => 'User registered successfully'
       ], 201);
     }
-    /* Ini dengan token
-    public function registrasi(Request $request) {
-      $validated = $request->validate([
-        'username' => 'required|string',
-        'email' => 'required|string',
-        'password' => 'required|string',
-      ]);
-
-      // Hash password untuk keamanan
-      // $validated['password'] = Hash::make($validated['password']);
-      $validated['password'] = bcrypt($validated['password']);
-
-      // Simpan data ke database
-      try {
-        // DB::table('users')->insert($validated);
-        $user = User::create([
-          'username' => $request->get('username'),
-          'email' => $request->get('email'),
-          'password' => Hash::make($request->get('password')),
-      ]);
-      } catch (\Exception $e) {
-          // Jika terjadi error saat insert
-          return response()->json([
-              'success' => false,
-              'message' => 'Failed to save user data',
-              'error' => $e->getMessage()
-          ], 500);
-      }
-
-      $token = JWTAuth::fromUser($user);
-      return response()->json(
-        data: compact('user','token'), 
-        status: 201
-      );
-      // Kembalikan response sukses
-      // return response()->json([
-      //     'success' => true,
-      //     'message' => 'User registered successfully'
-      // ], 201);
-    }
-    */
-    /* Ini tanpa token
-    public function login(Request $request) {
-      // Validasi input
-      $validated = $request->validate([
-        'email' => 'required|string|max:50',
-        'password' => 'required|string',
-      ]);
-
-      // Ambil user berdasarkan email
-      $user = DB::table('users')->where('email', $validated['email'])->first();
-
-      // Periksa apakah user ditemukan
-      if (!$user) {
-        return response()->json([
-          'success' => false,
-          'message' => 'User not found'
-        ], 404);
-      }
-
-      // Periksa kecocokan password
-      if (!Hash::check($validated['password'], $user->password)) {
-        return response()->json([
-          'success' => false,
-          'message' => 'Invalid credentials'
-        ], 401);
-      }
-
-      // Login berhasil
-      return response()->json(data: [
-        'success' => true,
-        'message' => 'Login successful',
-        'user' => [
-            'id' => $user->id,
-            'email' => $user->email,
-        ]
-      ], status: 200);
-    }
-    */
-    /* Ini dengan token */
     public function login(Request $request) {
       // Validasi input
       $validated = $request->validate([
@@ -170,23 +87,12 @@
       return response()->json([
         'success' => true,
         'message' => 'Login successful',
-        'user'    => [
-          'id'        => $user->id,
-          'email'     => $user->email,
-          'username'  => $user ->username
+        'user' => [
+            'id' => $user->id,
+            'email' => $user->email,
+            'username' => $user->username,
         ]
       ], 200);
-    }
-    public function getUser(Request $request) {
-      try {
-        if (! $user = JWTAuth::parseToken()->authenticate()) {
-            return response()->json(['error' => 'User not found'], 404);
-        }
-      } catch (JWTException $e) {
-          return response()->json(['error' => 'Invalid token'], 400);
-      }
-
-    return response()->json(compact('user'));
     }
     public function updateUser(Request $request) {
       $validated = $request->validate([
@@ -307,10 +213,6 @@
       200);
     }  
     public function logout(Request $request) {
-      JWTAuth::invalidate(JWTAuth::getToken());
-      return response()->json([
-        'message' => 'Successfully logged out'
-      ]);
     }
   }
 ?>

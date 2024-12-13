@@ -76,5 +76,5 @@ Route::controller(RecommendationController::class)->group(function () {
 });
 
 Route::controller(ScanhistoryController::class)->group(function () {
-    Route::get('/getscanhistory','getscanhistory');
+    Route::post('/getscanhistory','getScanhistoryByUserId');
 });
