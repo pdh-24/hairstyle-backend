@@ -42,7 +42,19 @@
       ]);
 
       try {
-        $Recommendation = DB::table("recommendations")->find($validated['id']);
+        $Recommendation = DB::table('recommendations as r')
+          ->select(
+              'r.id',
+              'r.face_shape',
+              'r.description',
+              DB::raw('h1.name as hair_style1'),
+              DB::raw('h2.name as hair_style2'),
+              DB::raw('h3.name as hair_style3')
+          )
+          ->leftJoin('haircut as h1', 'r.hair_style_id1', '=', 'h1.id')
+          ->leftJoin('haircut as h2', 'r.hair_style_id2', '=', 'h2.id')
+          ->leftJoin('haircut as h3', 'r.hair_style_id3', '=', 'h3.id')
+          ->where('id', $validated['id'])->get();
       } catch (\Throwable $th) {
         return response()->json([
           'success' => false,
@@ -58,7 +70,19 @@
     }
     public function getRecommendation(/* Request $request */) {
       try {
-        $RecommendationList = DB::table("recommendations")->get();
+        $RecommendationList = DB::table('recommendations as r')
+          ->select(
+              'r.id',
+              'r.face_shape',
+              'r.description',
+              DB::raw('h1.name as hair_style1'),
+              DB::raw('h2.name as hair_style2'),
+              DB::raw('h3.name as hair_style3')
+          )
+          ->leftJoin('haircut as h1', 'r.hair_style_id1', '=', 'h1.id')
+          ->leftJoin('haircut as h2', 'r.hair_style_id2', '=', 'h2.id')
+          ->leftJoin('haircut as h3', 'r.hair_style_id3', '=', 'h3.id')
+          ->get();
       } catch (\Throwable $th) {
         //throw $th;
         return response()->json([

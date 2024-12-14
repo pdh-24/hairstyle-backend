@@ -7,7 +7,7 @@
   use Illuminate\Http\Request;
 
   class CompatiblefaceController extends Controller {
-    public function getCompatibleface(Request $request) {
+    public function getCompatibleface(/* Request $request */) {
       // $validated = $request->validate([
       //   'id' => 'required|integer',
       //   'name' => 'required|string',

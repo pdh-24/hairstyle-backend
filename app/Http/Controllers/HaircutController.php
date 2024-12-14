@@ -28,7 +28,7 @@
       ], 201);
     }
 
-    public function getHaircut(Request $request) {
+    public function getHaircut(/* Request $request */) {
       
       try {
         $HaircutList = DB::table('haircut')->get();

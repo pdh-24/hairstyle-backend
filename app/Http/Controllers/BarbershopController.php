@@ -7,7 +7,7 @@
   use Illuminate\Http\Request;
 
   class BarbershopController extends Controller {
-    public function getBarbershop(Request $request) {
+    public function getBarbershop(/* Request $request */) {
       // $validated = $request->validate([
       //   'id' => 'required|integer',
       //   'name' => 'required|string',

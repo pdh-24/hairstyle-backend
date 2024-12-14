@@ -7,7 +7,7 @@
   use Illuminate\Http\Request;
 
   class ProductController extends Controller {
-    public function getProduct(Request $request) {
+    public function getProduct(/* Request $request */) {
       try {
         $ProductList = DB::table("products")->get();
         $ProductImages = DB::table("product_images")->get();
