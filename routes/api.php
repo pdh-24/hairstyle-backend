@@ -43,6 +43,9 @@ Route::controller(UserController::class)->group(function () {
     Route::post('/user/daftar', 'registrasi');
     Route::post('/user/login', 'login');
     Route::post('/updateuser', 'updateUser');
+    Route::post('/setuserlike','setUserLike');
+    Route::post('/getuserlike','getUserLike');
+    Route::post('/deleteuserlike','deleteUserLike');
     Route::post('/lupapassword', 'lupaPass');
     Route::post('/verifikasiotp',action: 'verifyOtp');
     Route::post('/logout','login');

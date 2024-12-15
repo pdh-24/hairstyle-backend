@@ -94,6 +94,91 @@
         ]
       ], 200);
     }
+    public function setUserLike(Request $request){
+      $validatedData = $request->validate([
+          'user_id' => 'required|integer',
+          'entity_type' => 'required|string',
+          'entity_id' => 'required|integer',
+      ]);
+
+      $userId = $validatedData['user_id'];
+      $entityType = $validatedData['entity_type'];
+      $entityId = $validatedData['entity_id'];
+
+      // Cek apakah sudah ada like dari user untuk entity ini
+      $existingLike = DB::table('likes')
+          ->where('user_id', $userId)
+          ->where('entity_type', $entityType)
+          ->where('entity_id', $entityId)
+          ->first();
+
+      if ($existingLike) {
+        // Jika sudah ada, hapus like (unlike)
+        DB::table('likes')
+            ->where('id', $existingLike->id)
+            ->delete();
+
+        return response()->json([
+          'message' => 'Like removed',
+        ], 200);
+      } else {
+        // Jika belum ada, tambahkan like
+        DB::table('likes')->insert([
+          'user_id' => $userId,
+          'entity_type' => $entityType,
+          'entity_id' => $entityId,
+          'created_at' => now(),
+        ]);
+
+        return response()->json([
+          'message' => 'Like added',
+        ], 201);
+      }
+    }
+    public function getUserLike(Request $request) {
+      $validated = $request->validate([
+        'id' => 'required|integer'
+      ]);
+
+      try {
+        $likes = DB::table('likes')
+          ->where('user_id', $validated['id'])
+          ->get();
+      } catch (\Exception $e) {
+        // Jika terjadi error saat insert
+        return response()->json([
+          'success' => false,
+          'message' => 'Gagal mendapatkan data favorit pengguna',
+          'error' => $e->getMessage()
+        ], 500);
+      }
+
+      return response()->json([
+        'success' => true,
+        'message' => 'Data favorit pengguna berhasil diperoleh',
+        'data' => $likes
+      ], 200);      
+    }
+    public function deleteUserLike(Request $request) {
+      $validated = $request->validate([
+        'id' => 'required|integer' // Id like, bukan id user
+      ]);
+
+      // Hapus like berdasarkan user_id, entity_type, dan entity_id
+    $deleted = DB::table('likes')
+        ->where('id', $validated['id']) // Id like, bukan id user
+        ->delete();
+
+    if ($deleted) {
+        return response()->json([
+            'message' => 'Like successfully deleted',
+        ], 200);
+    } else {
+        return response()->json([
+            'message' => 'Like not found',
+        ], 404);
+    }
+    }
     public function updateUser(Request $request) {
       $validated = $request->validate([
         'username' => 'required|string',
